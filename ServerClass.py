@@ -5,7 +5,7 @@ import tornado.web
 import socketio
 
 class Server:
-    def __init__(self, port=7777, debug=False):
+    def __init__(self, port=7777, debug=False,onConnectFunc=()):
         self.server = socketio.AsyncServer(async_mode='tornado')
         self.clients = []
         self.port = port
@@ -14,6 +14,7 @@ class Server:
         @self.server.event
         async def connect(sid, environ):
             self.clients.append(sid)
+            onConnectFunc(sid)
             print("Client ",self.clients.index(sid)+1 ," - ", sid, " Has Connected!")
             await self.server.emit('onConnected', {'data': 'OK'}, room=sid)
         @self.server.event
