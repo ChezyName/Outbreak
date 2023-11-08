@@ -19,6 +19,8 @@ def CreateServer(port=7777,debug=False):
     global clients
     clients = []
 
+    print("Creating Server on port:",port)
+
     @server.event
     async def connect(sid, environ):
         clients.append(sid)
@@ -39,19 +41,33 @@ def CreateServer(port=7777,debug=False):
     tornado.ioloop.IOLoop.current().start()
 
 @server.event
-def onJoin(sid,data):
+async def onJoin(sid,data):
     player,index = getPlayer(str(sid))
     print("Player Has Joined And Sent Their Username")
     print(data)
     if index == -1:
         print("Creating New Player Class")
-        plr = Player("BRAVO 0-"+str(len(players)),str(sid))
+        plr = Player(data['username'],str(sid))
         players.append(plr)
         print(plr.name,"Has Joined The Game!")
 
+        #send player list
+        names = []
+        for i in range(len(players)):
+            names.append(players[i].name)
+        await server.emit('StartGame',{'players': names})
+
 @server.on("move")
 def changePosition(sid,data):
-    print("Client Chaning Their Position!")
-    print(data)
+    plr,indx = getPlayer(str(sid))
+    if(indx != -1):
+        plr.setLocation(data['x'],data['y'],data['r'])
+
+@server.on("Start")
+async def StartGame(sid):
+    print("About to start game!!")
+    await server.emit('StartGame',{'plrCount': 1})
+
+        
 
 if __name__ == "__main__": CreateServer()

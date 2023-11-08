@@ -16,9 +16,10 @@ class Player:
     def getLocation(self):
         return (self.x,self.y)
     
-    def setLocation(self,x,y):
+    def setLocation(self,x,y,r):
         self.x = x
         self.y = y
+        self.r = r
 
     def addLocation(self,ax,ay,ar):
         self.x = ax * 1

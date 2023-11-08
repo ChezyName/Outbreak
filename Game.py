@@ -1,24 +1,15 @@
 import pygame
 import math
-from PlayerClass import Player
 
-pygame.init()
-window = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption("Outbreak Survival")
-clock = pygame.time.Clock()
+def initPygame():
+    pygame.init()
+    window = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption("Outbreak Survival")
+    return window
 
-#my player
-plr = Player("A","A",True)
-
-run = True
-while run:
-    clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-
+def runOneLoop(window,clock):
     keys = pygame.key.get_pressed()
-    
+    '''
     x = (keys[pygame.K_d] - keys[pygame.K_a])
     y = (keys[pygame.K_s] - keys[pygame.K_w])
 
@@ -30,10 +21,31 @@ while run:
 
     plr.addLocation(x,y,(-angle) - 90)
     print("MouseAngle:",(-angle) - 90)
+    '''
 
     window.fill((0,255,0))
-    plr.DrawPlayer(window)
+    #plr.DrawPlayer(window)
     pygame.display.flip()
 
-pygame.quit()
-exit()
+def initLobby(playerNames=[],window={},font={},myName=""):
+    pygame.display.set_caption("Lobby - " + str(len(playerNames)) + " Players.")
+    y = 32
+    UIs = []
+    for i in range(len(playerNames)):
+        print("Displaying:", playerNames[i])
+        xSize,ySize = window.get_size()
+        text = font.render(playerNames[i], True, (255,255,255), (0,0,0))
+        if(myName == playerNames[i]):
+            text = font.render("ME> "+playerNames[i], True, (255,255,255), (0,0,0))
+        textRect = text.get_rect()
+        textRect.center = (xSize // 2, y)
+        y += 50
+        UIs.append([text,textRect])
+    
+    return UIs
+
+def renderLobby(UIs,window):
+    window.fill((0,0,0))
+    for i in range(len(UIs)):
+        text,rect = UIs[i]
+        window.blit(text,rect)
