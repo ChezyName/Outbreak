@@ -14,7 +14,7 @@ class Server:
         @self.server.event
         async def connect(sid, environ):
             self.clients.append(sid)
-            onConnectFunc(sid)
+            if(onConnectFunc is not None): onConnectFunc(sid)
             print("Client ",self.clients.index(sid)+1 ," - ", sid, " Has Connected!")
             await self.server.emit('onConnected', {'data': 'OK'}, room=sid)
         @self.server.event

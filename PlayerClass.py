@@ -9,7 +9,7 @@ class Player:
         self.UID = UID
         self.Client = isClient
 
-        self.Sprite = pygame.image.load('./Resources/DefaultPlayer.png')
+        self.Sprite = pygame.image.load('./Resources/Tank.png')
         self.Sprite = pygame.transform.scale(self.Sprite,(80,80))
         self.rect = self.Sprite.get_rect()
 

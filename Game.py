@@ -3,10 +3,11 @@ import math
 from PlayerClass import Player
 
 pygame.init()
-window = pygame.display.set_mode((640, 480))
+window = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Outbreak Survival")
 clock = pygame.time.Clock()
 
+#my player
 plr = Player("A","A",True)
 
 run = True
@@ -27,10 +28,10 @@ while run:
     rel_x, rel_y = mouse_x - plrX, mouse_y - plyY
     angle = math.degrees(math.atan2(rel_y, rel_x))
 
-    plr.addLocation(x,y,-angle - 90)
-    print("MouseAngle:",-angle - 90)
+    plr.addLocation(x,y,(-angle) - 90)
+    print("MouseAngle:",(-angle) - 90)
 
-    window.fill((255,255,255))
+    window.fill((0,255,0))
     plr.DrawPlayer(window)
     pygame.display.flip()
 
