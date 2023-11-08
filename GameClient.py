@@ -4,14 +4,16 @@ from Game import initPygame, runOneLoop, initLobby, renderLobby
 import pygame
 from UI import Button
 
+gameRunning = False
+
 def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
+    global gameRunning
     with socketio.SimpleClient() as client:
         players = [name]
         
         print("Connecting...")
         client.connect(ip+":"+port, transports=['websocket'])
         client.emit('onJoin', {'username': name})
-        gameRunning = False
         endGame = False
 
         #global pygame stuff
@@ -19,7 +21,14 @@ def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
         clock = pygame.time.Clock()
         font = pygame.font.Font('./Resources/Roboto-Regular.ttf',32)
         UI = initLobby(players,window,font,name)
-        Ready = Button(font,window,"Ready Up")
+        isNotReady = True
+
+        def becomeReady():
+            global isNotReady
+            isNotReady = False
+            print("Ready'd Up!")
+            client.emit("Ready")
+        Ready = Button(font,window,"Ready Up",onClick=becomeReady)
     
         @client.client.on('StartGame')
         def startGame(data):
@@ -41,12 +50,13 @@ def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
                     endGame = True
                     break
             if gameRunning:
-                runOneLoop()
+                runOneLoop(window)
+                print("Game Loop!")
             else:
                 renderLobby(UI,window)
-                Ready.render(x=1280/2,y=600)
-                pygame.display.update()
-                pygame.display.flip()
+                if(isNotReady): Ready.render(x=1280/2,y=600)
+            pygame.display.update()
+            pygame.display.flip()
 
         pygame.quit()
         exit()

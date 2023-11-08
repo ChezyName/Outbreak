@@ -6,7 +6,7 @@ import tornado.web
 import socketio
 
 players = []
-
+gameStarted = False
 server = socketio.AsyncServer(async_mode='tornado')
 
 def getPlayer(UID=""):
@@ -14,6 +14,12 @@ def getPlayer(UID=""):
         if(players[i].UID == UID):
             return players[i],i
     return "",-1
+
+def getReadyPlayers():
+    readyPlrs = 0
+    for i in range(0,len(players)):
+        if(players[i].isReady): readyPlrs += 1
+    return readyPlrs
 
 def CreateServer(port=7777,debug=False):
     global clients
@@ -42,6 +48,10 @@ def CreateServer(port=7777,debug=False):
 
 @server.event
 async def onJoin(sid,data):
+    global gameStarted
+    if(gameStarted):
+        await server.disconnect(sid)
+        return gameStarted
     player,index = getPlayer(str(sid))
     print("Player Has Joined And Sent Their Username")
     print(data)
@@ -66,7 +76,22 @@ def changePosition(sid,data):
 @server.on("Start")
 async def StartGame(sid):
     print("About to start game!!")
-    await server.emit('StartGame',{'plrCount': 1})
+    gameStarted = True
+    await server.emit('StartGame',{'plrCount': len(players)})
+
+@server.on("Ready")
+async def becomeReady(sid):
+    global gameStarted
+    if(gameStarted): return
+    plr,indx = getPlayer(str(sid))
+    if(indx != -1):
+        plr.isReady = True
+    readyCount = getReadyPlayers()
+    print(readyCount,"/",len(players),"are ready.")
+    if(readyCount >= len(players)):
+        print("Starting Game Shortly...")
+        gameStarted = True
+        await server.emit('StartGame',{'plrCount': len(players)})
 
         
 

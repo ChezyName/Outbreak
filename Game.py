@@ -7,7 +7,7 @@ def initPygame():
     pygame.display.set_caption("Outbreak Survival")
     return window
 
-def runOneLoop(window,clock):
+def runOneLoop(window):
     keys = pygame.key.get_pressed()
     '''
     x = (keys[pygame.K_d] - keys[pygame.K_a])
@@ -25,7 +25,6 @@ def runOneLoop(window,clock):
 
     window.fill((0,255,0))
     #plr.DrawPlayer(window)
-    pygame.display.flip()
 
 def initLobby(playerNames=[],window={},font={},myName=""):
     pygame.display.set_caption("Lobby - " + str(len(playerNames)) + " Players.")

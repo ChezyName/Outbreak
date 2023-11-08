@@ -8,6 +8,7 @@ class Player:
         self.name = name
         self.UID = UID
         self.Client = isClient
+        self.isReady = False
 
         self.Sprite = pygame.image.load('./Resources/Tank.png')
         self.Sprite = pygame.transform.scale(self.Sprite,(80,80))
