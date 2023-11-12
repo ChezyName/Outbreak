@@ -36,6 +36,9 @@ def CreateServer(port=7777,debug=False):
     def disconnect(sid):
         print("Client ",clients.index(sid)+1 ," - ", sid , ' Has Disconnected')
         clients.remove(sid)
+        player,index = getPlayer(str(sid))
+        if index != -1:
+            players.remove(player)
 
     app = tornado.web.Application(
         [

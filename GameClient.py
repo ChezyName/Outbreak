@@ -5,6 +5,7 @@ import pygame
 from UI import Button
 
 gameRunning = False
+isNotReady = True
 
 def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
     global gameRunning
@@ -21,7 +22,6 @@ def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
         clock = pygame.time.Clock()
         font = pygame.font.Font('./Resources/Roboto-Regular.ttf',32)
         UI = initLobby(players,window,font,name)
-        isNotReady = True
 
         def becomeReady():
             global isNotReady
@@ -35,6 +35,7 @@ def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
             global gameRunning
             print("Starting Game",data)
             gameRunning = True
+            pygame.display.set_caption("Outbreak Survival")
 
         @client.client.on('PlayerList')
         def playerList(data):
@@ -51,7 +52,6 @@ def CreateClient(name="BRAVO 0-1",ip="http://localhost",port="7777"):
                     break
             if gameRunning:
                 runOneLoop(window)
-                print("Game Loop!")
             else:
                 renderLobby(UI,window)
                 if(isNotReady): Ready.render(x=1280/2,y=600)
